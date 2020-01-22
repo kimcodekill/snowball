@@ -58,12 +58,13 @@ public class ThrowBall : MonoBehaviour
 
     private void DoThrow(float armAngle)
     {
-        float strength = (armAngle - minAngle) / (maxAngle - minAngle);
-        RaycastHit target;
-        Physics.Raycast(_handSocket.position, _camera.forward, out target, 100);
-
+        float normStrength = (armAngle - minAngle) / (maxAngle - minAngle);
+        
         GameObject ball = Instantiate(throwable, _handSocket.position, Quaternion.Euler(0,0,0));
-        ball.GetComponent<Rigidbody>().AddForce(Vector3.Normalize(target.point - _handSocket.position) * strength * maxStrength, ForceMode.Impulse);
-        Debug.Log(string.Format("minangle: {0} | maxangle {1} | armangle {2} | strength: {3}", minAngle, maxAngle, armAngle, strength));
+
+        Vector3 throwForce = _camera.forward * normStrength * maxStrength;
+        ball.GetComponent<Rigidbody>().AddForce(throwForce, ForceMode.Impulse);
+
+        Debug.Log(string.Format("minangle: {0} | maxangle {1} | armangle {2} | strength: {3}", minAngle, maxAngle, armAngle, normStrength));
     }
 }
